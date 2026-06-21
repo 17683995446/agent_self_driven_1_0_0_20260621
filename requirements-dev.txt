@@ -1,0 +1,6 @@
+# 自驱永续进化Agent系统 - 开发依赖
+# 安装：pip install -r requirements-dev.txt
+
+# 测试框架
+pytest>=6.2.0
+pytest-cov>=2.12.0

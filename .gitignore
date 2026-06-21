@@ -1,0 +1,61 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ===== Testing =====
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ===== 项目运行时产物 =====
+# 日志文件（保留目录占位）
+logs/*
+!logs/.gitkeep
+
+# 测试快照（保留目录占位）
+test_snapshots/*
+!test_snapshots/.gitkeep
+
+# 运行时数据（PID文件等，保留目录占位）
+data/*
+!data/.gitkeep
+
+# ===== 编辑器/IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ===== 环境配置 =====
+.env
+.env.local
+.env.*.local
+
+# ===== 类型检查缓存 =====
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/

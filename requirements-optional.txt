@@ -1,0 +1,9 @@
+# 自驱永续进化Agent系统 - 可选依赖
+# 安装：pip install -r requirements-optional.txt
+# 这些依赖缺失时系统降级运行，不会崩溃
+
+# 核心数值计算（缺失时降级为纯Python实现）
+numpy>=1.21.0
+
+# 系统监控（缺失时感知层返回默认值）
+psutil>=5.8.0

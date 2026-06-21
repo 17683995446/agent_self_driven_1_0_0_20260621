@@ -1,0 +1,143 @@
+# =============================================================================
+# 生产环境配置 (Production Environment)
+# =============================================================================
+# 适用场景：生产部署、长期运行
+# 加载方式：--env prod 或 AGENT_CONFIG_PATH=config/prod.yaml
+# 特点：保守的资源限制、较高的日志级别、更大的容量
+# =============================================================================
+
+# ---- 基础信息 ----
+# environment: 运行环境标识
+#   取值: dev | prod | test
+environment: prod
+
+# log_level: 日志级别
+#   取值: DEBUG | INFO | WARNING | ERROR
+#   说明: 生产环境推荐 WARNING，减少日志量
+log_level: WARNING
+
+# ---- 系统循环配置 ----
+# cycle_interval: 主循环间隔（秒）
+#   取值范围: > 0，推荐 0.1 ~ 10.0
+cycle_interval: 1.0
+
+# cycle_timeout: 单次循环超时（秒）
+#   取值范围: > cycle_interval，推荐 5.0 ~ 60.0
+cycle_timeout: 60.0
+
+# ---- 任务池配置 ----
+# task_pool_max_size: 任务池最大容量
+#   取值范围: > 0，推荐 50 ~ 1000
+#   说明: 生产环境可设置较大
+task_pool_max_size: 1000
+
+# task_default_timeout: 任务默认超时（秒）
+#   取值范围: > 0，推荐 10.0 ~ 600.0
+task_default_timeout: 300.0
+
+# ---- 安全护栏 ----
+# guardrail: 资源使用上限（生产环境更严格）
+guardrail:
+  # max_cpu_usage: CPU使用率上限（0~1）
+  #   取值范围: 0.0 ~ 1.0
+  max_cpu_usage: 0.2
+
+  # max_memory_usage: 内存使用率上限（0~1）
+  #   取值范围: 0.0 ~ 1.0
+  max_memory_usage: 0.2
+
+  # max_disk_usage: 磁盘使用率上限（0~1）
+  #   取值范围: 0.0 ~ 1.0
+  max_disk_usage: 0.85
+
+  # forbidden_operations: 禁止执行的危险命令正则模式列表
+  forbidden_operations:
+    - 'rm\s+-rf\s+/'      # 禁止 rm -rf /
+    - 'mkfs'               # 禁止格式化文件系统
+    - 'dd\s+if=.*of=/dev/' # 禁止写入设备文件
+
+# ---- 决策引擎 ----
+# decision: 决策模块的探索-利用平衡参数
+decision:
+  # base_exploration_ratio: 基础探索比例
+  #   取值范围: 0.0 ~ 1.0
+  base_exploration_ratio: 0.3
+
+  # min_exploration_ratio: 最小探索比例
+  #   取值范围: 0.0 ~ base_exploration_ratio
+  min_exploration_ratio: 0.05
+
+  # max_exploration_ratio: 最大探索比例
+  #   取值范围: base_exploration_ratio ~ 1.0
+  max_exploration_ratio: 0.7
+
+# ---- 感知模块 ----
+# perception: 系统状态感知参数
+perception:
+  # system_poll_interval: 系统状态采样间隔（秒）
+  #   取值范围: > 0，推荐 0.1 ~ 5.0
+  system_poll_interval: 1.0
+
+  # max_cpu_usage: 感知模块自身CPU占用上限
+  #   取值范围: 0.0 ~ 1.0
+  max_cpu_usage: 0.02
+
+# ---- 驱力引擎 ----
+# drive_engine: 驱动力权重（safe + gain + eff = 1.0）
+drive_engine:
+  base_weights:
+    # safe: 安全驱力权重
+    #   取值范围: 0.0 ~ 1.0
+    safe: 0.4
+
+    # gain: 收益驱力权重
+    #   取值范围: 0.0 ~ 1.0
+    gain: 0.4
+
+    # eff: 效率驱力权重
+    #   取值范围: 0.0 ~ 1.0
+    eff: 0.2
+
+  # adaptation_rate: 驱力权重自适应速率
+  #   取值范围: 0.0 ~ 1.0
+  adaptation_rate: 0.3
+
+# ---- 事件总线 ----
+# event_bus: 事件总线参数
+event_bus:
+  # max_event_history: 事件历史最大保留数
+  #   取值范围: > 0，推荐 100 ~ 10000
+  max_event_history: 10000
+
+  # async_workers: 异步事件处理工作线程数
+  #   取值范围: >= 1，推荐 1 ~ 8
+  async_workers: 4
+
+# ---- 审计日志 ----
+# audit_dir: 审计日志目录
+audit_dir: "./logs/audit"
+
+# ---- 快照配置 ----
+# snapshot: 系统状态快照参数
+snapshot:
+  # snapshot_dir: 快照存储目录
+  snapshot_dir: "./logs/snapshots"
+
+  # max_snapshots: 最大快照保留数
+  #   取值范围: > 0
+  max_snapshots: 50
+
+  # interval: 快照间隔（秒）
+  #   取值范围: > 0，推荐 600 ~ 7200
+  interval: 3600
+
+# ---- API网关 ----
+# api_gateway: API限流参数
+api_gateway:
+  # rate_limit_requests_per_second: 每秒最大请求数
+  #   取值范围: > 0
+  rate_limit_requests_per_second: 50
+
+  # rate_limit_burst_size: 突发请求上限
+  #   取值范围: >= rate_limit_requests_per_second
+  rate_limit_burst_size: 100

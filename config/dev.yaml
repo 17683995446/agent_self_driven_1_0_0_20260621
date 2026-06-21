@@ -1,0 +1,149 @@
+# =============================================================================
+# 开发环境配置 (Development Environment)
+# =============================================================================
+# 适用场景：本地开发、调试、单元测试
+# 加载方式：默认加载，或通过 --env dev / AGENT_CONFIG_PATH 指定
+# =============================================================================
+
+# ---- 基础信息 ----
+# environment: 运行环境标识
+#   取值: dev | prod | test
+environment: dev
+
+# log_level: 日志级别（影响输出到 logs/agent.log 的详细程度）
+#   取值: DEBUG | INFO | WARNING | ERROR
+#   说明: DEBUG 输出最详细，适合开发调试；ERROR 仅输出错误
+log_level: DEBUG
+
+# ---- 系统循环配置 ----
+# cycle_interval: 主循环间隔（秒），决定系统决策频率
+#   取值范围: > 0，推荐 0.1 ~ 10.0
+#   说明: 值越小响应越快但CPU占用越高
+cycle_interval: 1.0
+
+# cycle_timeout: 单次循环超时（秒），超过则告警
+#   取值范围: > cycle_interval，推荐 5.0 ~ 60.0
+cycle_timeout: 30.0
+
+# ---- 任务池配置 ----
+# task_pool_max_size: 任务池最大容量，超过则拒绝新任务
+#   取值范围: > 0，推荐 50 ~ 1000
+task_pool_max_size: 100
+
+# task_default_timeout: 任务默认超时（秒），超时则中断
+#   取值范围: > 0，推荐 10.0 ~ 600.0
+task_default_timeout: 60.0
+
+# ---- 安全护栏 ----
+# guardrail: 资源使用上限，超过则触发保护机制
+guardrail:
+  # max_cpu_usage: CPU使用率上限（0~1，1=100%）
+  #   取值范围: 0.0 ~ 1.0
+  #   说明: dev允许较高以方便调试
+  max_cpu_usage: 0.5
+
+  # max_memory_usage: 内存使用率上限（0~1，1=100%）
+  #   取值范围: 0.0 ~ 1.0
+  max_memory_usage: 0.5
+
+  # max_disk_usage: 磁盘使用率上限（0~1，1=100%）
+  #   取值范围: 0.0 ~ 1.0
+  max_disk_usage: 0.9
+
+  # forbidden_operations: 禁止执行的危险命令正则模式列表
+  #   说明: 匹配到任一模式则拒绝执行
+  forbidden_operations:
+    - 'rm\s+-rf\s+/'      # 禁止 rm -rf /
+    - 'mkfs'               # 禁止格式化文件系统
+    - 'dd\s+if=.*of=/dev/' # 禁止写入设备文件
+
+# ---- 决策引擎 ----
+# decision: 决策模块的探索-利用平衡参数
+decision:
+  # base_exploration_ratio: 基础探索比例
+  #   取值范围: 0.0 ~ 1.0
+  #   说明: 0=纯利用，1=纯探索；推荐 0.2 ~ 0.4
+  base_exploration_ratio: 0.3
+
+  # min_exploration_ratio: 最小探索比例（下限保护）
+  #   取值范围: 0.0 ~ base_exploration_ratio
+  min_exploration_ratio: 0.05
+
+  # max_exploration_ratio: 最大探索比例（上限保护）
+  #   取值范围: base_exploration_ratio ~ 1.0
+  max_exploration_ratio: 0.7
+
+# ---- 感知模块 ----
+# perception: 系统状态感知参数
+perception:
+  # system_poll_interval: 系统状态采样间隔（秒）
+  #   取值范围: > 0，推荐 0.1 ~ 5.0
+  system_poll_interval: 1.0
+
+  # max_cpu_usage: 感知模块自身CPU占用上限
+  #   取值范围: 0.0 ~ 1.0
+  #   说明: 应远小于 guardrail.max_cpu_usage
+  max_cpu_usage: 0.02
+
+# ---- 驱力引擎 ----
+# drive_engine: 驱动力权重（safe安全 + gain收益 + eff效率）
+#   约束: safe + gain + eff = 1.0
+drive_engine:
+  base_weights:
+    # safe: 安全驱力权重（避免危险）
+    #   取值范围: 0.0 ~ 1.0
+    safe: 0.4
+
+    # gain: 收益驱力权重（追求收益）
+    #   取值范围: 0.0 ~ 1.0
+    gain: 0.4
+
+    # eff: 效率驱力权重（资源效率）
+    #   取值范围: 0.0 ~ 1.0
+    eff: 0.2
+
+  # adaptation_rate: 驱力权重自适应速率
+  #   取值范围: 0.0 ~ 1.0
+  #   说明: 0=不自适应，1=快速自适应
+  adaptation_rate: 0.3
+
+# ---- 事件总线 ----
+# event_bus: 事件总线参数
+event_bus:
+  # max_event_history: 事件历史最大保留数
+  #   取值范围: > 0，推荐 100 ~ 10000
+  max_event_history: 1000
+
+  # async_workers: 异步事件处理工作线程数
+  #   取值范围: >= 1，推荐 1 ~ 8
+  async_workers: 1
+
+# ---- 审计日志 ----
+# audit_dir: 审计日志目录（相对路径基于项目根目录）
+#   说明: 目录不存在时自动创建
+audit_dir: "./logs/audit"
+
+# ---- 快照配置 ----
+# snapshot: 系统状态快照参数
+snapshot:
+  # snapshot_dir: 快照存储目录
+  snapshot_dir: "./logs/snapshots"
+
+  # max_snapshots: 最大快照保留数，超过则删除最旧
+  #   取值范围: > 0
+  max_snapshots: 10
+
+  # interval: 快照间隔（秒）
+  #   取值范围: > 0，推荐 600 ~ 7200
+  interval: 3600
+
+# ---- API网关 ----
+# api_gateway: API限流参数
+api_gateway:
+  # rate_limit_requests_per_second: 每秒最大请求数
+  #   取值范围: > 0
+  rate_limit_requests_per_second: 100
+
+  # rate_limit_burst_size: 突发请求上限
+  #   取值范围: >= rate_limit_requests_per_second
+  rate_limit_burst_size: 150

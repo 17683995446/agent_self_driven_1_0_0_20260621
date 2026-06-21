@@ -1,0 +1,53 @@
+# 自驱永续进化预测修正Agent系统
+# Docker Compose配置
+
+version: '3.8'
+
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: self-driven-agent:latest
+    container_name: self-driven-agent
+    restart: unless-stopped
+
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # 数据持久化
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./snapshots:/app/snapshots
+      - ./memory:/app/memory
+      - ./config:/app/config:ro
+
+    # 环境变量
+    environment:
+      - PYTHONPATH=/app
+      - AGENT_CONFIG_PATH=/app/config/prod.yaml
+      - AGENT_LOG_DIR=/app/logs
+      - AGENT_DATA_DIR=/app/data
+
+    # 健康检查（轻量级，不实例化完整AgentSystem）
+    healthcheck:
+      test: ["CMD", "python", "scripts/healthcheck.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"

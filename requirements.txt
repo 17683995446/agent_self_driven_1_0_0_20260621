@@ -1,0 +1,7 @@
+# 自驱永续进化Agent系统 - 核心依赖
+# 第一性原理：只依赖必要且成熟的库
+# 安装：pip install -r requirements.txt
+# 完整安装（含可选依赖）：pip install -r requirements.txt -r requirements-optional.txt
+
+# 配置管理（必需）
+pyyaml>=5.4.0

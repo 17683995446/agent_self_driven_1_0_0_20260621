@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "self-driven-agent"
+version = "1.0.0"
+description = "自驱永续进化Agent系统"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Self-Driven Agent Team" }
+]
+keywords = ["agent", "self-driven", "autonomous", "evolution"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "pyyaml>=5.4.0",
+]
+
+[project.optional-dependencies]
+optional = [
+    "psutil>=5.8.0",
+    "numpy>=1.21.0",
+]
+dev = [
+    "pytest>=6.2.0",
+    "pytest-cov>=2.12.0",
+]
+all = [
+    "psutil>=5.8.0",
+    "numpy>=1.21.0",
+    "pytest>=6.2.0",
+    "pytest-cov>=2.12.0",
+]
+
+[project.scripts]
+self-driven-agent = "src.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-data]
+"src" = ["config/*.yaml"]
